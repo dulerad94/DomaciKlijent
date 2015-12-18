@@ -1,7 +1,7 @@
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -25,10 +25,13 @@ public class KlijentNit implements Runnable {
 			System.out.println(odabrano);
 			System.out.println(klijent.izlazniTok.toString());
 			System.out.println(klijent.ulazniTok.toString());
-			klijent.izlazniTok.writeUTF(odabrano);
+			klijent.izlazniTok.println(odabrano);
 			System.out.println(odabrano);
 			String odgovor=klijent.ulazniTok.readLine();
-			if(odgovor!="moze") return;	
+			System.out.println(odgovor);
+			System.out.println("MNOGO JEBE OVO ZNAS");
+			if(!odgovor.equals("moze")) return;	
+			System.out.println("MNOGO JEBE OVO ZNAS");
 			izvrsiOperaciju();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -41,9 +44,9 @@ public class KlijentNit implements Runnable {
 		try {
 			Socket soket = new Socket("localhost",123);
 			BufferedReader ulazniTok=new BufferedReader(new InputStreamReader(soket.getInputStream()));
-			DataOutputStream izlazniTok=new DataOutputStream(soket.getOutputStream());
+			PrintStream izlazniTok=new PrintStream(soket.getOutputStream());
 			String brojevi=klijent.getTxtBrojevi().getText()+"\n";
-			izlazniTok.writeUTF(brojevi);
+			izlazniTok.println(brojevi);
 			klijent.getTxtRezultat().setText(ulazniTok.readLine());
 			izlazniTok.close();
 			ulazniTok.close();

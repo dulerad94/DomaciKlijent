@@ -1,21 +1,21 @@
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JTextField;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.awt.event.ActionEvent;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 
 public class Klijent extends JFrame {
 
@@ -27,7 +27,7 @@ public class Klijent extends JFrame {
 	private JTextField txtRezultat;
 	Socket soket;
 	BufferedReader ulazniTok;
-	DataOutputStream izlazniTok;
+	PrintStream izlazniTok;
 	private JButton btnZavrsi;
 	KlijentNit klijent;
 
@@ -68,7 +68,7 @@ public class Klijent extends JFrame {
 	private int izadji() {
 		if (soket != null) {
 			try {
-				izlazniTok.writeBytes("kraj");
+				izlazniTok.println("kraj");
 				ulazniTok.close();
 				izlazniTok.close();
 				soket.close();
@@ -169,7 +169,7 @@ public class Klijent extends JFrame {
 	private void uspostaviVeze() {
 		try {
 			ulazniTok = new BufferedReader(new InputStreamReader(soket.getInputStream()));
-			izlazniTok = new DataOutputStream(soket.getOutputStream());
+			izlazniTok = new PrintStream(soket.getOutputStream());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
