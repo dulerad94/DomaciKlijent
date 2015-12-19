@@ -12,9 +12,12 @@ import java.net.UnknownHostException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.JWindow;
 import javax.swing.border.EmptyBorder;
 
 public class Klijent extends JFrame {
@@ -105,19 +108,20 @@ public class Klijent extends JFrame {
 			btnIzaberi = new JButton("Izaberi");
 			btnIzaberi.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {				
-						try {
-							soket = new Socket("localhost", 1908);		
-							uspostaviVeze();
-							klijent = new KlijentNit(getKlijent());
-							regulisiDugmice(true);
-						} catch (UnknownHostException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}			
-					
+							try {
+								soket = new Socket("localhost", 1908);
+								uspostaviVeze();
+								klijent = new KlijentNit(getKlijent());
+								regulisiDugmice(true);
+							} catch (UnknownHostException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								JOptionPane.showMessageDialog(contentPane,
+										"Greška! Server nije ukljucen", "GRESKA",
+										JOptionPane.ERROR_MESSAGE);
+							}			
 				}
 			});
 			btnIzaberi.setBounds(171, 40, 95, 23);
@@ -139,6 +143,7 @@ public class Klijent extends JFrame {
 			btnIzvrsi = new JButton("Izvrsi");
 			btnIzvrsi.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					if(txtIzraz.getText()==null) return;
 				}
 				
 			});
