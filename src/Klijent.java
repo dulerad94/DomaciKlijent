@@ -2,7 +2,6 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -12,12 +11,10 @@ import java.net.UnknownHostException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.JWindow;
 import javax.swing.border.EmptyBorder;
 
 public class Klijent extends JFrame {
@@ -183,7 +180,7 @@ public class Klijent extends JFrame {
 			btnDodajOperand = new JButton("Dodaj operand");
 			btnDodajOperand.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					klijent.dodaj();
+					dodajOperand();
 				}
 			});
 			btnDodajOperand.setEnabled(false);
@@ -204,6 +201,7 @@ public class Klijent extends JFrame {
 			btnObrisiPoslednji = new JButton("Obrisi poslednji");
 			btnObrisiPoslednji.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					obrisiPoslednjiOperand();
 				}
 			});
 			btnObrisiPoslednji.setEnabled(false);
@@ -226,6 +224,19 @@ public class Klijent extends JFrame {
 		btnZavrsi.setEnabled(b);
 		btnIzvrsi.setEnabled(b);
 		btnDodajOperand.setEnabled(b);
-		btnObrisiPoslednji.setEnabled(!b);
+		btnObrisiPoslednji.setEnabled(b);
+	}
+	private void dodajOperand(){
+		String izraz=txtIzraz.getText();
+		if(izraz.equals("")) izraz+=txtOperand.getText();
+		else izraz+=klijent.operacija+txtOperand.getText();
+		txtIzraz.setText(izraz);
+	}
+	private void obrisiPoslednjiOperand(){
+		String izraz=txtIzraz.getText();
+		if(izraz.contains(klijent.operacija))
+			izraz=izraz.substring(0, izraz.lastIndexOf(klijent.operacija));
+		else izraz="";
+		txtIzraz.setText(izraz);
 	}
 }

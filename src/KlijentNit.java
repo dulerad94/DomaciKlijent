@@ -10,11 +10,9 @@ public class KlijentNit implements Runnable {
 	Klijent klijent;
 	Thread t;
 	String odabrano;
-	String operand;
-	Stack<String> operandi;
+	String operacija;
 	public KlijentNit(Klijent klijent) {
 		this.klijent=klijent;
-		operandi=new Stack<>();
 		t = new Thread(this);
 		t.setDaemon(true);
 		t.start();
@@ -26,7 +24,7 @@ public class KlijentNit implements Runnable {
 		try {
 			odabrano=(String) klijent.getComboBox().getSelectedItem();
 			klijent.izlazniTok.println(odabrano);
-			operand=odrediOperand();
+			operacija=odrediOperaciju();
 			String odgovor=klijent.ulazniTok.readLine();
 			if(!odgovor.equals("moze")) return;	
 			KlijentSoket kl=new KlijentSoket(new Socket("localhost",123),this);
@@ -38,17 +36,12 @@ public class KlijentNit implements Runnable {
 		}
 		
 	}
-	public void dodaj(){
-		if(klijent.getTxtIzraz().getText()=="") klijent.getTxtIzraz().setText(klijent.getTxtOperand().getText());
-		else klijent.getTxtIzraz().setText(operand+klijent.getTxtOperand().getText());
-	}
-	private String odrediOperand(){
+	private String odrediOperaciju(){
 		if(odabrano.equals("sabiranje")) return"+";
 		if(odabrano.equals("oduzimanje")) return"-";
 		if(odabrano.equals("mnozenje")) return"*";
 		if(odabrano.equals("deljenje")) return"/";
-		throw new RuntimeException();
+		throw new RuntimeException("Otkud ovde mrco?????");
 	}
-
 
 }

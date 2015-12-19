@@ -29,7 +29,7 @@ public class KlijentSoket {
 	public void izvrsiOperaciju(){
 		
 		try {
-			String izraz=klijentskaNit.klijent.getTxtIzraz().getText()+"\n";
+			String izraz=klijentskaNit.klijent.getTxtIzraz().getText();
 			izlazniTok.println(izraz);
 			klijentskaNit.klijent.getTxtRezultat().setText(ulazniTok.readLine());
 			
