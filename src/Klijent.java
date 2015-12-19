@@ -22,7 +22,7 @@ public class Klijent extends JFrame {
 	private JPanel contentPane;
 	private JComboBox comboBox;
 	private JButton btnIzaberi;
-	private JTextField txtBrojevi;
+	private JTextField txtIzraz;
 	private JButton btnIzvrsi;
 	private JTextField txtRezultat;
 	Socket soket;
@@ -30,6 +30,9 @@ public class Klijent extends JFrame {
 	PrintStream izlazniTok;
 	private JButton btnZavrsi;
 	KlijentNit klijent;
+	private JButton btnDodajOperand;
+	private JTextField txtOperand;
+	private JButton btnObrisiPoslednji;
 
 	/**
 	 * Launch the application.
@@ -52,17 +55,20 @@ public class Klijent extends JFrame {
 	 */
 	public Klijent() {
 		setDefaultCloseOperation(izadji());
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 509, 302);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		contentPane.add(getComboBox());
 		contentPane.add(getBtnIzaberi());
-		contentPane.add(getTxtBrojevi());
+		contentPane.add(getTxtIzraz());
 		contentPane.add(getBtnIzvrsi());
 		contentPane.add(getTxtRezultat());
 		contentPane.add(getBtnZavrsi());
+		contentPane.add(getBtnDodajOperand());
+		contentPane.add(getTxtOperand());
+		contentPane.add(getBtnObrisiPoslednji());
 	}
 
 	private int izadji() {
@@ -114,18 +120,18 @@ public class Klijent extends JFrame {
 					
 				}
 			});
-			btnIzaberi.setBounds(171, 40, 89, 23);
+			btnIzaberi.setBounds(171, 40, 95, 23);
 		}
 		return btnIzaberi;
 	}
 
-	public JTextField getTxtBrojevi() {
-		if (txtBrojevi == null) {
-			txtBrojevi = new JTextField();
-			txtBrojevi.setBounds(29, 122, 119, 20);
-			txtBrojevi.setColumns(10);
+	public JTextField getTxtIzraz() {
+		if (txtIzraz == null) {
+			txtIzraz = new JTextField();
+			txtIzraz.setBounds(29, 151, 179, 20);
+			txtIzraz.setColumns(10);
 		}
-		return txtBrojevi;
+		return txtIzraz;
 	}
 
 	private JButton getBtnIzvrsi() {
@@ -137,7 +143,7 @@ public class Klijent extends JFrame {
 				
 			});
 			btnIzvrsi.setEnabled(false);
-			btnIzvrsi.setBounds(171, 121, 89, 23);
+			btnIzvrsi.setBounds(282, 150, 179, 23);
 		}
 		return btnIzvrsi;
 	}
@@ -145,27 +151,61 @@ public class Klijent extends JFrame {
 	public JTextField getTxtRezultat() {
 		if (txtRezultat == null) {
 			txtRezultat = new JTextField();
-			txtRezultat.setBounds(29, 175, 119, 20);
+			txtRezultat.setBounds(29, 193, 432, 44);
 			txtRezultat.setColumns(10);
 		}
 		return txtRezultat;
 	}
 
-	private JButton getBtnZavrsi() {
+	public JButton getBtnZavrsi() {
 		if (btnZavrsi == null) {
 			btnZavrsi = new JButton("Zavrsi");
 			btnZavrsi.setEnabled(false);
 			btnZavrsi.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					regulisiDugmice(false);
+					izadji();
 					klijent = null;
 				}
 			});
-			btnZavrsi.setBounds(293, 40, 89, 23);
+			btnZavrsi.setBounds(366, 40, 95, 23);
 		}
 		return btnZavrsi;
 	}
 
+	public JButton getBtnDodajOperand() {
+		if (btnDodajOperand == null) {
+			btnDodajOperand = new JButton("Dodaj operand");
+			btnDodajOperand.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					klijent.dodaj();
+				}
+			});
+			btnDodajOperand.setEnabled(false);
+			btnDodajOperand.setBounds(171, 101, 131, 23);
+		}
+		return btnDodajOperand;
+	}
+	public JTextField getTxtOperand() {
+		if (txtOperand == null) {
+			txtOperand = new JTextField();
+			txtOperand.setBounds(29, 102, 95, 20);
+			txtOperand.setColumns(10);
+		}
+		return txtOperand;
+	}
+	public JButton getBtnObrisiPoslednji() {
+		if (btnObrisiPoslednji == null) {
+			btnObrisiPoslednji = new JButton("Obrisi poslednji");
+			btnObrisiPoslednji.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+				}
+			});
+			btnObrisiPoslednji.setEnabled(false);
+			btnObrisiPoslednji.setBounds(330, 101, 131, 23);
+		}
+		return btnObrisiPoslednji;
+	}
 	private void uspostaviVeze() {
 		try {
 			ulazniTok = new BufferedReader(new InputStreamReader(soket.getInputStream()));
@@ -180,6 +220,7 @@ public class Klijent extends JFrame {
 		btnIzaberi.setEnabled(!b);
 		btnZavrsi.setEnabled(b);
 		btnIzvrsi.setEnabled(b);
+		btnDodajOperand.setEnabled(b);
+		btnObrisiPoslednji.setEnabled(!b);
 	}
-
 }
