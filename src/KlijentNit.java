@@ -11,6 +11,8 @@ public class KlijentNit implements Runnable {
 	Thread t;
 	String odabrano;
 	String operacija;
+	volatile boolean pritisnuto=false;
+	
 	public KlijentNit(Klijent klijent) {
 		this.klijent=klijent;
 		t = new Thread(this);
@@ -28,9 +30,15 @@ public class KlijentNit implements Runnable {
 			String odgovor=klijent.ulazniTok.readLine();
 			if(!odgovor.equals("moze")) return;	
 			KlijentSoket kl=new KlijentSoket(new Socket("localhost",123),this);
+			synchronized(this){
+				wait();
+			}
 			kl.izvrsiOperaciju();
 			kl.zatvoriVeze();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

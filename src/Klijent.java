@@ -141,6 +141,9 @@ public class Klijent extends JFrame {
 			btnIzvrsi.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if(txtIzraz.getText()==null) return;
+					synchronized(klijent){
+						klijent.notify();
+					}
 				}
 				
 			});
