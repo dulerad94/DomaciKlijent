@@ -69,19 +69,24 @@ public class Klijent extends JFrame {
 		contentPane.add(getBtnDodajOperand());
 		contentPane.add(getTxtOperand());
 		contentPane.add(getBtnObrisiPoslednji());
+		try {
+			soket = new Socket("localhost", 1908);
+			uspostaviVeze();
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(contentPane, "Greška! Server nije ukljucen", "GRESKA",
+					JOptionPane.ERROR_MESSAGE);
+			System.exit(0);
+		}
 	}
 
 	private int izadji() {
 		if (soket != null) {
-			try {
-				izlazniTok.println("kraj");
-				ulazniTok.close();
-				izlazniTok.close();
-				soket.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			izlazniTok.println("kraj");
+			zatvoriVeze();
 		}
 		return JFrame.EXIT_ON_CLOSE;
 	}
@@ -104,21 +109,9 @@ public class Klijent extends JFrame {
 		if (btnIzaberi == null) {
 			btnIzaberi = new JButton("Izaberi");
 			btnIzaberi.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {				
-							try {
-								soket = new Socket("localhost", 1908);
-								uspostaviVeze();
-								klijent = new KlijentNit(getKlijent());
-								regulisiDugmice(true);
-							} catch (UnknownHostException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							} catch (IOException e1) {
-								// TODO Auto-generated catch block
-								JOptionPane.showMessageDialog(contentPane,
-										"Greška! Server nije ukljucen", "GRESKA",
-										JOptionPane.ERROR_MESSAGE);
-							}			
+				public void actionPerformed(ActionEvent e) {
+					klijent = new KlijentNit(getKlijent());
+					regulisiDugmice(true);
 				}
 			});
 			btnIzaberi.setBounds(171, 40, 95, 23);
@@ -140,12 +133,13 @@ public class Klijent extends JFrame {
 			btnIzvrsi = new JButton("Izvrsi");
 			btnIzvrsi.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if(txtIzraz.getText()==null) return;
-					synchronized(klijent){
+					if (txtIzraz.getText().equals(""))
+						return;
+					synchronized (klijent) {
 						klijent.notify();
 					}
 				}
-				
+
 			});
 			btnIzvrsi.setEnabled(false);
 			btnIzvrsi.setBounds(282, 150, 179, 23);
@@ -169,7 +163,6 @@ public class Klijent extends JFrame {
 			btnZavrsi.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					regulisiDugmice(false);
-					izadji();
 					klijent = null;
 				}
 			});
@@ -191,6 +184,7 @@ public class Klijent extends JFrame {
 		}
 		return btnDodajOperand;
 	}
+
 	public JTextField getTxtOperand() {
 		if (txtOperand == null) {
 			txtOperand = new JTextField();
@@ -199,6 +193,7 @@ public class Klijent extends JFrame {
 		}
 		return txtOperand;
 	}
+
 	public JButton getBtnObrisiPoslednji() {
 		if (btnObrisiPoslednji == null) {
 			btnObrisiPoslednji = new JButton("Obrisi poslednji");
@@ -212,6 +207,7 @@ public class Klijent extends JFrame {
 		}
 		return btnObrisiPoslednji;
 	}
+
 	private void uspostaviVeze() {
 		try {
 			ulazniTok = new BufferedReader(new InputStreamReader(soket.getInputStream()));
@@ -222,24 +218,42 @@ public class Klijent extends JFrame {
 		}
 
 	}
-	private void regulisiDugmice(boolean b){
+
+	private void regulisiDugmice(boolean b) {
 		btnIzaberi.setEnabled(!b);
 		btnZavrsi.setEnabled(b);
 		btnIzvrsi.setEnabled(b);
 		btnDodajOperand.setEnabled(b);
 		btnObrisiPoslednji.setEnabled(b);
 	}
-	private void dodajOperand(){
-		String izraz=txtIzraz.getText();
-		if(izraz.equals("")) izraz+=txtOperand.getText();
-		else izraz+=klijent.operacija+txtOperand.getText();
+
+	private void dodajOperand() {
+		String izraz = txtIzraz.getText();
+		if (izraz.equals(""))
+			izraz += txtOperand.getText();
+		else
+			izraz += klijent.operacija + txtOperand.getText();
 		txtIzraz.setText(izraz);
 	}
-	private void obrisiPoslednjiOperand(){
-		String izraz=txtIzraz.getText();
-		if(izraz.contains(klijent.operacija))
-			izraz=izraz.substring(0, izraz.lastIndexOf(klijent.operacija));
-		else izraz="";
+
+	private void obrisiPoslednjiOperand() {
+		String izraz = txtIzraz.getText();
+		if (izraz.contains(klijent.operacija))
+			izraz = izraz.substring(0, izraz.lastIndexOf(klijent.operacija));
+		else
+			izraz = "";
 		txtIzraz.setText(izraz);
+	}
+
+	private void zatvoriVeze() {
+		try {
+			ulazniTok.close();
+			izlazniTok.close();
+			soket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 }

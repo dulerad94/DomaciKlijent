@@ -11,30 +11,34 @@ public class KlijentNit implements Runnable {
 	Thread t;
 	String odabrano;
 	String operacija;
-	volatile boolean pritisnuto=false;
-	
+
 	public KlijentNit(Klijent klijent) {
-		this.klijent=klijent;
+		this.klijent = klijent;
 		t = new Thread(this);
 		t.setDaemon(true);
 		t.start();
 	}
 
-	
 	@Override
-	public void run() {		
+	public void run() {
 		try {
-			odabrano=(String) klijent.getComboBox().getSelectedItem();
+			odabrano = (String) klijent.getComboBox().getSelectedItem();
 			klijent.izlazniTok.println(odabrano);
-			operacija=odrediOperaciju();
-			String odgovor=klijent.ulazniTok.readLine();
-			if(!odgovor.equals("moze")) return;	
-			KlijentSoket kl=new KlijentSoket(new Socket("localhost",123),this);
-			synchronized(this){
-				wait();
+			operacija = odrediOperaciju();
+			String odgovor = klijent.ulazniTok.readLine();
+			if (!odgovor.equals("moze"))
+				return;
+			synchronized (this) {
+				while (true) {
+					System.out.println("eo me");
+					wait();
+					System.out.println("prosa");
+					KlijentSoket kl = new KlijentSoket(new Socket("localhost", 123), this);
+					kl.izvrsiOperaciju();
+					kl.zatvoriVeze();
+					System.out.println("polomio vetar grane");
+				}
 			}
-			kl.izvrsiOperaciju();
-			kl.zatvoriVeze();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -42,13 +46,18 @@ public class KlijentNit implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
-	private String odrediOperaciju(){
-		if(odabrano.equals("sabiranje")) return"+";
-		if(odabrano.equals("oduzimanje")) return"-";
-		if(odabrano.equals("mnozenje")) return"*";
-		if(odabrano.equals("deljenje")) return"/";
+
+	private String odrediOperaciju() {
+		if (odabrano.equals("sabiranje"))
+			return "+";
+		if (odabrano.equals("oduzimanje"))
+			return "-";
+		if (odabrano.equals("mnozenje"))
+			return "*";
+		if (odabrano.equals("deljenje"))
+			return "/";
 		throw new RuntimeException("Otkud ovde mrco?????");
 	}
 
