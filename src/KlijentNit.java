@@ -34,10 +34,12 @@ public class KlijentNit implements Runnable {
 			gui.saljiPodatke(odabrano);
 			operacija = odrediOperaciju();
 			String odgovor = gui.citajPodatke();
+			String ServerId=gui.citajPodatke();
 			if (!odgovor.equals("moze"))
 				return;
 			synchronized (this) {
 				wait();
+				gui.saljiPodatke(ServerId);
 				KlijentSoket soketZaPodatke = new KlijentSoket(new Socket("localhost", 123), this);
 				soketZaPodatke.izvrsiOperaciju();
 				soketZaPodatke.zatvoriVeze();
