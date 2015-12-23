@@ -273,10 +273,10 @@ public class Klijent extends JFrame {
 		txtOperand.setEnabled(false);
 		
 	}
-	public void pisi(String tekst){
+	public void saljiPodatke(String tekst){
 		izlazniTok.println(tekst);
 	}
-	public String citaj(){
+	public String citajPodatke(){
 		try {
 			return ulazniTok.readLine();
 		} catch (IOException e) {

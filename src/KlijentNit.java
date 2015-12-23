@@ -12,36 +12,37 @@ public class KlijentNit implements Runnable {
 	private String odabrano;
 	private String operacija;
 
-	
-
 	public KlijentNit(Klijent gui) {
 		this.gui = gui;
 		t = new Thread(this);
 		t.setDaemon(true);
 		t.start();
 	}
+
 	public String getOperacija() {
 		return operacija;
 	}
+
 	public Klijent getGui() {
 		return gui;
 	}
+
 	@Override
 	public void run() {
 		try {
 			odabrano = (String) gui.getComboBox().getSelectedItem();
-			gui.pisi(odabrano);
+			gui.saljiPodatke(odabrano);
 			operacija = odrediOperaciju();
-			String odgovor = gui.citaj();
+			String odgovor = gui.citajPodatke();
 			if (!odgovor.equals("moze"))
 				return;
 			synchronized (this) {
-					wait();
-					KlijentSoket soketZaPodatke = new KlijentSoket(new Socket("localhost", 123), this);
-					soketZaPodatke.izvrsiOperaciju();
-					soketZaPodatke.zatvoriVeze();
+				wait();
+				KlijentSoket soketZaPodatke = new KlijentSoket(new Socket("localhost", 123), this);
+				soketZaPodatke.izvrsiOperaciju();
+				soketZaPodatke.zatvoriVeze();
 			}
-			
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -52,7 +53,6 @@ public class KlijentNit implements Runnable {
 
 	}
 
-	
 	private String odrediOperaciju() {
 		if (odabrano.equals("sabiranje"))
 			return "+";
