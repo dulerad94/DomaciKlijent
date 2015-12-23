@@ -25,14 +25,14 @@ public class Klijent extends JFrame {
 	private JTextField txtIzraz;
 	private JButton btnIzvrsi;
 	private JTextField txtRezultat;
-	Socket soket;
-	BufferedReader ulazniTok;
-	PrintStream izlazniTok;
-	private JButton btnZavrsi;
-	KlijentNit klijent;
+	private JButton btnVratiSe;
+	private KlijentNit klijent;
 	private JButton btnDodajOperand;
 	private JTextField txtOperand;
 	private JButton btnObrisiPoslednji;
+	private Socket soket;
+	private BufferedReader ulazniTok;
+	private PrintStream izlazniTok;
 
 	/**
 	 * Launch the application.
@@ -65,7 +65,7 @@ public class Klijent extends JFrame {
 		contentPane.add(getTxtIzraz());
 		contentPane.add(getBtnIzvrsi());
 		contentPane.add(getTxtRezultat());
-		contentPane.add(getBtnZavrsi());
+		contentPane.add(getBtnVratiSe());
 		contentPane.add(getBtnDodajOperand());
 		contentPane.add(getTxtOperand());
 		contentPane.add(getBtnObrisiPoslednji());
@@ -91,7 +91,7 @@ public class Klijent extends JFrame {
 		return JFrame.EXIT_ON_CLOSE;
 	}
 
-	public Klijent getKlijent() {
+	public Klijent getGUI() {
 		return this;
 	}
 
@@ -110,8 +110,9 @@ public class Klijent extends JFrame {
 			btnIzaberi = new JButton("Izaberi");
 			btnIzaberi.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					klijent = new KlijentNit(getKlijent());
+					klijent = new KlijentNit(getGUI());
 					regulisiDugmice(true);
+					txtOperand.setEnabled(true);
 				}
 			});
 			btnIzaberi.setBounds(171, 40, 95, 23);
@@ -122,6 +123,7 @@ public class Klijent extends JFrame {
 	public JTextField getTxtIzraz() {
 		if (txtIzraz == null) {
 			txtIzraz = new JTextField();
+			txtIzraz.setEnabled(false);
 			txtIzraz.setBounds(29, 151, 179, 20);
 			txtIzraz.setColumns(10);
 		}
@@ -133,11 +135,10 @@ public class Klijent extends JFrame {
 			btnIzvrsi = new JButton("Izvrsi");
 			btnIzvrsi.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if (txtIzraz.getText().equals(""))
-						return;
 					synchronized (klijent) {
 						klijent.notify();
 					}
+					vratiSe();
 				}
 
 			});
@@ -150,25 +151,25 @@ public class Klijent extends JFrame {
 	public JTextField getTxtRezultat() {
 		if (txtRezultat == null) {
 			txtRezultat = new JTextField();
+			txtRezultat.setEnabled(false);
 			txtRezultat.setBounds(29, 193, 432, 44);
 			txtRezultat.setColumns(10);
 		}
 		return txtRezultat;
 	}
 
-	public JButton getBtnZavrsi() {
-		if (btnZavrsi == null) {
-			btnZavrsi = new JButton("Zavrsi");
-			btnZavrsi.setEnabled(false);
-			btnZavrsi.addActionListener(new ActionListener() {
+	public JButton getBtnVratiSe() {
+		if (btnVratiSe == null) {
+			btnVratiSe = new JButton("Vrati se");
+			btnVratiSe.setEnabled(false);
+			btnVratiSe.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					regulisiDugmice(false);
-					klijent = null;
+					vratiSe();
 				}
 			});
-			btnZavrsi.setBounds(366, 40, 95, 23);
+			btnVratiSe.setBounds(366, 40, 95, 23);
 		}
-		return btnZavrsi;
+		return btnVratiSe;
 	}
 
 	public JButton getBtnDodajOperand() {
@@ -188,6 +189,7 @@ public class Klijent extends JFrame {
 	public JTextField getTxtOperand() {
 		if (txtOperand == null) {
 			txtOperand = new JTextField();
+			txtOperand.setEnabled(false);
 			txtOperand.setBounds(29, 102, 95, 20);
 			txtOperand.setColumns(10);
 		}
@@ -221,27 +223,33 @@ public class Klijent extends JFrame {
 
 	private void regulisiDugmice(boolean b) {
 		btnIzaberi.setEnabled(!b);
-		btnZavrsi.setEnabled(b);
-		btnIzvrsi.setEnabled(b);
+		btnVratiSe.setEnabled(b);
+		btnIzvrsi.setEnabled(false);
 		btnDodajOperand.setEnabled(b);
-		btnObrisiPoslednji.setEnabled(b);
+		btnObrisiPoslednji.setEnabled(false);
 	}
 
 	private void dodajOperand() {
+		if(txtOperand.getText().equals("")) return;
 		String izraz = txtIzraz.getText();
 		if (izraz.equals(""))
 			izraz += txtOperand.getText();
 		else
-			izraz += klijent.operacija + txtOperand.getText();
+			izraz += klijent.getOperacija() + txtOperand.getText();
 		txtIzraz.setText(izraz);
+		btnObrisiPoslednji.setEnabled(true);
+		btnIzvrsi.setEnabled(true);
 	}
 
 	private void obrisiPoslednjiOperand() {
 		String izraz = txtIzraz.getText();
-		if (izraz.contains(klijent.operacija))
-			izraz = izraz.substring(0, izraz.lastIndexOf(klijent.operacija));
-		else
+		if (izraz.contains(klijent.getOperacija()))
+			izraz = izraz.substring(0, izraz.lastIndexOf(klijent.getOperacija()));
+		else{
 			izraz = "";
+			btnObrisiPoslednji.setEnabled(false);
+			btnIzvrsi.setEnabled(false);
+		}
 		txtIzraz.setText(izraz);
 	}
 
@@ -254,6 +262,27 @@ public class Klijent extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+	}
+	private void vratiSe(){
+		regulisiDugmice(false);
+		klijent = null;
+		ocistiPolja();
+	}
+	private void ocistiPolja(){
+		txtOperand.setText("");
+		txtOperand.setEnabled(false);
+		
+	}
+	public void pisi(String tekst){
+		izlazniTok.println(tekst);
+	}
+	public String citaj(){
+		try {
+			return ulazniTok.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

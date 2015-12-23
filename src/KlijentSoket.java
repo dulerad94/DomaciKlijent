@@ -6,14 +6,14 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class KlijentSoket {
-	Socket soket;
-	BufferedReader ulazniTok;
-	PrintStream izlazniTok;
-	KlijentNit klijentskaNit;
+	private Socket soket;
+	private BufferedReader ulazniTok;
+	private PrintStream izlazniTok;
+	private KlijentNit klijent;
 	
-	public KlijentSoket(Socket soket, KlijentNit klijentskaNit) {
+	public KlijentSoket(Socket soket, KlijentNit klijent) {
 		this.soket = soket;
-		this.klijentskaNit=klijentskaNit;
+		this.klijent=klijent;
 		uspostaviVeze();
 	}
 	public void uspostaviVeze() {
@@ -29,9 +29,10 @@ public class KlijentSoket {
 	public void izvrsiOperaciju(){
 		
 		try {
-			String izraz=klijentskaNit.klijent.getTxtIzraz().getText();
+			String izraz=klijent.getGui().getTxtIzraz().getText();
 			izlazniTok.println(izraz);
-			klijentskaNit.klijent.getTxtRezultat().setText(ulazniTok.readLine());
+			klijent.getGui().getTxtRezultat().setText(ulazniTok.readLine());
+			klijent.getGui().getTxtIzraz().setText("");
 			
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block

@@ -7,38 +7,41 @@ import java.net.UnknownHostException;
 import java.util.Stack;
 
 public class KlijentNit implements Runnable {
-	Klijent klijent;
-	Thread t;
-	String odabrano;
-	String operacija;
+	private Klijent gui;
+	private Thread t;
+	private String odabrano;
+	private String operacija;
 
-	public KlijentNit(Klijent klijent) {
-		this.klijent = klijent;
+	
+
+	public KlijentNit(Klijent gui) {
+		this.gui = gui;
 		t = new Thread(this);
 		t.setDaemon(true);
 		t.start();
 	}
-
+	public String getOperacija() {
+		return operacija;
+	}
+	public Klijent getGui() {
+		return gui;
+	}
 	@Override
 	public void run() {
 		try {
-			odabrano = (String) klijent.getComboBox().getSelectedItem();
-			klijent.izlazniTok.println(odabrano);
+			odabrano = (String) gui.getComboBox().getSelectedItem();
+			gui.pisi(odabrano);
 			operacija = odrediOperaciju();
-			String odgovor = klijent.ulazniTok.readLine();
+			String odgovor = gui.citaj();
 			if (!odgovor.equals("moze"))
 				return;
 			synchronized (this) {
-				while (true) {
-					System.out.println("eo me");
 					wait();
-					System.out.println("prosa");
-					KlijentSoket kl = new KlijentSoket(new Socket("localhost", 123), this);
-					kl.izvrsiOperaciju();
-					kl.zatvoriVeze();
-					System.out.println("polomio vetar grane");
-				}
+					KlijentSoket soketZaPodatke = new KlijentSoket(new Socket("localhost", 123), this);
+					soketZaPodatke.izvrsiOperaciju();
+					soketZaPodatke.zatvoriVeze();
 			}
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -49,6 +52,7 @@ public class KlijentNit implements Runnable {
 
 	}
 
+	
 	private String odrediOperaciju() {
 		if (odabrano.equals("sabiranje"))
 			return "+";
