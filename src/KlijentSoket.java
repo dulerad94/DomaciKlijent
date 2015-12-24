@@ -31,7 +31,8 @@ public class KlijentSoket {
 		try {
 			String izraz=klijent.getGui().getTxtIzraz().getText();
 			izlazniTok.println(izraz);
-			klijent.getGui().getTxtRezultat().setText(ulazniTok.readLine());
+			String rezultat=ulazniTok.readLine();
+			klijent.getGui().getTxtRezultat().setText(rezultat);
 			klijent.getGui().getTxtIzraz().setText("");
 			
 		} catch (UnknownHostException e) {

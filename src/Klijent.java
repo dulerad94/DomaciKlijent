@@ -25,7 +25,6 @@ public class Klijent extends JFrame {
 	private JTextField txtIzraz;
 	private JButton btnIzvrsi;
 	private JTextField txtRezultat;
-	private JButton btnVratiSe;
 	private KlijentNit klijent;
 	private JButton btnDodajOperand;
 	private JTextField txtOperand;
@@ -65,7 +64,6 @@ public class Klijent extends JFrame {
 		contentPane.add(getTxtIzraz());
 		contentPane.add(getBtnIzvrsi());
 		contentPane.add(getTxtRezultat());
-		contentPane.add(getBtnVratiSe());
 		contentPane.add(getBtnDodajOperand());
 		contentPane.add(getTxtOperand());
 		contentPane.add(getBtnObrisiPoslednji());
@@ -112,7 +110,7 @@ public class Klijent extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					klijent = new KlijentNit(getGUI());
 					regulisiDugmice(true);
-					txtOperand.setEnabled(true);
+					ocistiPolja(true);
 				}
 			});
 			btnIzaberi.setBounds(171, 40, 95, 23);
@@ -156,20 +154,6 @@ public class Klijent extends JFrame {
 			txtRezultat.setColumns(10);
 		}
 		return txtRezultat;
-	}
-
-	public JButton getBtnVratiSe() {
-		if (btnVratiSe == null) {
-			btnVratiSe = new JButton("Vrati se");
-			btnVratiSe.setEnabled(false);
-			btnVratiSe.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					vratiSe();
-				}
-			});
-			btnVratiSe.setBounds(366, 40, 95, 23);
-		}
-		return btnVratiSe;
 	}
 
 	public JButton getBtnDodajOperand() {
@@ -223,22 +207,25 @@ public class Klijent extends JFrame {
 
 	private void regulisiDugmice(boolean b) {
 		btnIzaberi.setEnabled(!b);
-		btnVratiSe.setEnabled(b);
-		btnIzvrsi.setEnabled(false);
 		btnDodajOperand.setEnabled(b);
-		btnObrisiPoslednji.setEnabled(false);
+		regulisiDugmadKadJeMoguceIzvrsitiOperaciju(false);
 	}
-
+	private void regulisiDugmadKadJeMoguceIzvrsitiOperaciju(boolean b){
+		btnIzvrsi.setEnabled(b);
+		btnObrisiPoslednji.setEnabled(b);
+	}
 	private void dodajOperand() {
-		if(txtOperand.getText().equals("")) return;
+		if(txtOperand.getText().equals("")) {
+			txtOperand.setFocusable(true);
+			return;
+		}
 		String izraz = txtIzraz.getText();
 		if (izraz.equals(""))
 			izraz += txtOperand.getText();
 		else
 			izraz += klijent.getOperacija() + txtOperand.getText();
 		txtIzraz.setText(izraz);
-		btnObrisiPoslednji.setEnabled(true);
-		btnIzvrsi.setEnabled(true);
+		regulisiDugmadKadJeMoguceIzvrsitiOperaciju(true);
 	}
 
 	private void obrisiPoslednjiOperand() {
@@ -247,8 +234,7 @@ public class Klijent extends JFrame {
 			izraz = izraz.substring(0, izraz.lastIndexOf(klijent.getOperacija()));
 		else{
 			izraz = "";
-			btnObrisiPoslednji.setEnabled(false);
-			btnIzvrsi.setEnabled(false);
+			regulisiDugmadKadJeMoguceIzvrsitiOperaciju(false);
 		}
 		txtIzraz.setText(izraz);
 	}
@@ -266,11 +252,11 @@ public class Klijent extends JFrame {
 	private void vratiSe(){
 		regulisiDugmice(false);
 		klijent = null;
-		ocistiPolja();
+		ocistiPolja(false);
 	}
-	private void ocistiPolja(){
+	private void ocistiPolja(boolean b){
 		txtOperand.setText("");
-		txtOperand.setEnabled(false);
+		txtOperand.setEnabled(b);
 		
 	}
 	public void saljiPodatke(String tekst){

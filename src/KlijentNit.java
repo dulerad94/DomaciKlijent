@@ -11,7 +11,7 @@ public class KlijentNit implements Runnable {
 	private Thread t;
 	private String odabrano;
 	private String operacija;
-
+	public static final String MOZE="moze";
 	public KlijentNit(Klijent gui) {
 		this.gui = gui;
 		t = new Thread(this);
@@ -35,7 +35,7 @@ public class KlijentNit implements Runnable {
 			operacija = odrediOperaciju();
 			String odgovor = gui.citajPodatke();
 			String ServerId=gui.citajPodatke();
-			if (!odgovor.equals("moze"))
+			if (!MOZE.equals(odgovor))
 				return;
 			synchronized (this) {
 				wait();
